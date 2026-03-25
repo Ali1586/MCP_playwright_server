@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test App - MCP Playwright</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .success-message {
+            display: none;
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .info-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px 0;
+            margin-top: 5px;
+            width: 200px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-menu li {
+            list-style: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .dropdown-menu li:hover {
+            background: #f0f0f0;
+        }
+        
+        .test-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .test-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Playwright Test App</h1>
+        <p class="subtitle">Junior Testare - Övningsformulär</p>
+        
+        <form id="testForm">
+            <div class="form-group">
+                <label for="firstName">Förnamn</label>
+                <input 
+                    type="text" 
+                    id="firstName" 
+                    name="firstName"
+                    placeholder="Ex: John"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName">Efternamn</label>
+                <input 
+                    type="text" 
+                    id="lastName" 
+                    name="lastName"
+                    placeholder="Ex: Doe"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="email">E-post</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email"
+                    placeholder="test@example.com"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="country">Land</label>
+                <select id="country" name="country" required>
+                    <option value="">-- Välj land --</option>
+                    <option value="sweden">Sverige</option>
+                    <option value="norway">Norge</option>
+                    <option value="denmark">Danmark</option>
+                    <option value="finland">Finland</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Meddelande</label>
+                <textarea 
+                    id="message" 
+                    name="message"
+                    placeholder="Skriv ditt meddelande här..."
+                    rows="4"
+                ></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input 
+                        type="checkbox" 
+                        id="terms" 
+                        name="terms"
+                        required
+                    >
+                    <span style="margin-left: 8px;">Jag godkänner användarvillkoren</span>
+                </label>
+            </div>
+            
+            <button type="submit" id="submitBtn">Skicka Formulär</button>
+            
+            <div class="success-message" id="successMessage">
+                ✅ Formulär skickat! Välkommen, <span id="userName"></span>!
+            </div>
+        </form>
+        
+        <div class="info-box">
+            <strong>ℹ️ För Playwright Test:</strong><br>
+            • Använd selectors: #firstName, #lastName, #email, #country, #submitBtn<br>
+            • Test assertions: Verifiera att success-meddelandet visas<br>
+            • Test-länk: <a href="#" class="test-link" onclick="alert('Test klick fungerar!'); return false;">Klicka här för test</a>
+        </div>
+    </div>
+    
+    <script>
+        // Hantera formulärskickning
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎭 Playwright Test App loaded!');
+            console.log('Form selectors:');
+            console.log('  #firstName - Förnamn input');
+            console.log('  #lastName - Efternamn input');
+            console.log('  #email - E-post input');
+            console.log('  #country - Land select');
+            console.log('  #submitBtn - Submit button');
+            console.log('  #successMessage - Success message');
+            
+            const form = document.getElementById('testForm');
+            if (form) {
+                form.addEventListener('submit', handleFormSubmit);
+            }
+        });
+        
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const country = document.getElementById('country').value;
+            
+            // Visa succesmeddelande
+            const successMsg = document.getElementById('successMessage');
+            const userName = document.getElementById('userName');
+            userName.textContent = firstName + ' ' + lastName;
+            successMsg.classList.add('show');
+            
+            // Logga data för testning
+            console.log('Form submitted with data:', {
+                firstName,
+                lastName,
+                email,
+                country,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Återställ formulär efter 3 sekunder
+            setTimeout(() => {
+                this.reset();
+                successMsg.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
